@@ -13,16 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ##########################################################################
-  #!/usr/bin/env jruby
 
 require 'digest'
 require 'sequel'
-require 'java'
+#require 'java'
 require_relative 'lib/helper.rb'
 
 BACKUP_FOLDER = '/mnt/go_server/go-server/artifacts/serverBackups/backup_*/'
 BACKUP_DOWNLOAD_FOLDER = './go_server_backup'
 BACKUP_SERVER_URL = ENV['BACKUP_SERVER_URL']
+SNAPSHOT = {:MD5 => {},:TABLE => {}}
 
 class Redhat
   include Rake::DSL if defined?(Rake::DSL)
@@ -59,22 +59,28 @@ end
 
 
 task :compute_md5 do
-  db_checksum = Digest::MD5.hexdigest File.read "#{BACKUP_FOLDER}/db.zip"
-  config_repo_checksum = Digest::MD5.hexdigest File.read "#{BACKUP_FOLDER}/config-repo.zip"
-  config_dir_checksum = Digest::MD5.hexdigest File.read "#{BACKUP_FOLDER}/config-dir.zip"
-  open("#{BACKUP_FOLDER}/version.txt", 'a') do |file|
-    file.puts "db.zip MD5: #{db_checksum}"
-    file.puts "config-repo.zip MD5: #{config_repo_checksum}"
-    file.puts "config-dir.zip MD5: #{config_dir_checksum}"
+  %w{db.zip config-repo.zip config-dir.zip}.each{|f|
+    SNAPSHOT[:MD5].merge!(f.to_sym => Digest::MD5.hexdigest(File.read "#{BACKUP_DOWNLOAD_FOLDER}/#{f}"))
+  }
+  open("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json", 'w') do |file|
+    file.write(SNAPSHOT.to_json)
   end
 end
 
 task :take_db_snapshot do
   rm_rf "#{Dir.tmpdir}/db_check" if Dir.exists?("#{Dir.tmpdir}/db_check")
   mkdir_p "#{Dir.tmpdir}/db_check"
-  unzipfile zip_file,"#{Dir.tmpdir}/db_check"
-
+  unzipfile "#{BACKUP_FOLDER}/db.zip","#{Dir.tmpdir}/db_check"
+  DB = Sequel.connect("jdbc:h2:file:#{Dir.tmpdir}/db_checkcruise;user=sa;password=''")
+  DB["SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='TABLE'"].each{|t|
+    table = t[:table_name]
+    SNAPSHOT[:TABLES].merge!(table.to_sym => "#{DB[table.to_sym].count}")
+  }
+  open("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json", 'a') do |file|
+    file.write(SNAPSHOT.to_json)
+  end
 end
 
 
-task :default => [:restore, :run_test, :cleanup]
+task :restore_test => [:restore, :run_test, :cleanup]
+task :post_backup => [:compute_md5, :take_db_snapshot]
