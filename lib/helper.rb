@@ -20,6 +20,7 @@ require 'json'
 require 'nokogiri'
 require 'test/unit'
 require 'open-uri'
+require 'zip'
 
 include Test::Unit::Assertions
 
@@ -71,23 +72,24 @@ end
 def unzipfile(file, dest)
   Zip::File.open(file) do |f|
     f.each do |entry|
-      entry.extract dest
+      target = Pathname.new(dest) + entry.name
+      entry.extract target unless File.exist? target
     end
   end
 end
 
 def restore_files(zip_file, dest)
   begin
-    rm_rf "./tmp" if Dir.exits?("./tmp")
-    mkdir_p "./tmp"
-    unzipfile zip_file, "./tmp"
-    cp_r "./tmp/.", dest
+    rm_rf "tmp" if Dir.exists?("tmp")
+    mkdir_p "tmp"
+    unzipfile zip_file, "tmp"
+    cp_r "tmp/.", dest
   rescue => e
     p "Restoration of #{zip_file} failed with error #{e.message}"
   end
 end
 
 def server_version
-  version = File.open("../go_server_backup/version.txt", "rb").read
+  version = File.open("./go_server_backup/version.txt", "rb").read
   "#{version.split(" ")[0]}-#{version.split(" ")[1].split("-")[0][1..-1]}"
 end
