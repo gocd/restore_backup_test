@@ -59,6 +59,11 @@ def running?(url)
   end
 end
 
+def clean_create_dir(dir)
+  rm_rf dir if Dir.exists?(dir)
+  mkdir_p dir
+end
+
 def ping(url)
   RestClient.get("#{url}")
 end
