@@ -1,0 +1,6 @@
+go_server_backup
+tmp
+*.lock
+vendor/bundle
+vendor/gem_home
+.bundle
