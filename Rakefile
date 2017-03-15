@@ -78,7 +78,8 @@ task :backup_snapshot do
 
   Dir["#{BACKUP_FOLDER}/**/*.zip"].each {|f| SNAPSHOT[:MD5].merge!(f.split('/').last.to_sym => Digest::MD5.hexdigest(File.read "#{f}"))}
   clean_create_dir("#{Dir.tmpdir}/db")
-  unzipfile "#{BACKUP_FOLDER}/**/db.zip","#{Dir.tmpdir}/db"
+  dbfile = Dir["#{BACKUP_FOLDER}/**/db.zip"].first.to_s
+  unzipfile dbfile,"#{Dir.tmpdir}/db"
   DB = Sequel.connect("jdbc:h2:file:#{Dir.tmpdir}/db/cruise;user=sa")
   DB["SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='TABLE'"].each{|t|
     table = t[:table_name]
