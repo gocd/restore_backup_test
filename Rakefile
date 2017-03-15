@@ -22,7 +22,7 @@ require_relative 'lib/helper.rb'
 
 include Test::Unit::Assertions
 
-BACKUP_FOLDER = ENV['BACKUP_FOLDER'] || '/mnt/go_server/go-server/artifacts/serverBackups/backup_*/'
+BACKUP_FOLDER = ENV['BACKUP_FOLDER'] || '/mnt/go_server/go-server/artifacts/serverBackups'
 BACKUP_DOWNLOAD_FOLDER = ENV['BACKUP_DOWNLOAD_FOLDER'] ||  './go_server_backup'
 BACKUP_SERVER_URL = ENV['BACKUP_SERVER_URL']
 SNAPSHOT = {:MD5 => {},:TABLES => {}}
@@ -75,11 +75,9 @@ task :cleanup do
 end
 
 task :backup_snapshot do
-  %w{db.zip config-repo.zip config-dir.zip}.each{|f|
-    SNAPSHOT[:MD5].merge!(f.to_sym => Digest::MD5.hexdigest(File.read "#{BACKUP_FOLDER}/#{f}"))
-  }
+  Dir["#{BACKUP_FOLDER}/**/*.zip"].each {|f| SNAPSHOT[:MD5].merge!(f.split('/').last.to_sym => Digest::MD5.hexdigest(File.read "#{f}"))}
   clean_create_dir("#{Dir.tmpdir}/db")
-  unzipfile "#{BACKUP_FOLDER}/db.zip","#{Dir.tmpdir}/db"
+  unzipfile "#{BACKUP_FOLDER}/**/db.zip","#{Dir.tmpdir}/db"
   DB = Sequel.connect("jdbc:h2:file:#{Dir.tmpdir}/db/cruise;user=sa")
   DB["SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='TABLE'"].each{|t|
     table = t[:table_name]
@@ -88,6 +86,7 @@ task :backup_snapshot do
   open("#{BACKUP_FOLDER}/snapshot.json", 'w') do |file|
     file.write(SNAPSHOT.to_json)
   end
+  sh("mv #{BACKUP_FOLDER}/snapshot.json #{BACKUP_FOLDER}/backup_*/")
 end
 
 task :restore_test => [:restore, :run_test, :cleanup]
