@@ -75,6 +75,7 @@ task :cleanup do
 end
 
 task :backup_snapshot do
+
   Dir["#{BACKUP_FOLDER}/**/*.zip"].each {|f| SNAPSHOT[:MD5].merge!(f.split('/').last.to_sym => Digest::MD5.hexdigest(File.read "#{f}"))}
   clean_create_dir("#{Dir.tmpdir}/db")
   unzipfile "#{BACKUP_FOLDER}/**/db.zip","#{Dir.tmpdir}/db"
@@ -87,6 +88,7 @@ task :backup_snapshot do
     file.write(SNAPSHOT.to_json)
   end
   sh("mv #{BACKUP_FOLDER}/snapshot.json #{BACKUP_FOLDER}/backup_*/")
+
 end
 
 task :restore_test => [:restore, :run_test, :cleanup]
