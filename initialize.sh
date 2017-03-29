@@ -1,23 +1,20 @@
-set -e
-
-RELEASE_SERVER = $1
-BASE_ARCH = $2
+#!/bin/bash
 
 /bin/cat << EOF > /etc/yum.repos.d/base.repo
 [base]
-name=CentOS-$RELEASE_SERVER - Base
-baseurl=http://fmtsd01.thoughtworks.com/centos/6.8/os/$BASE_ARCH/
+name=CentOS-$1 - Base
+baseurl=http://fmtsd01.thoughtworks.com/centos/6.8/os/$2/
 enabled=1
 fastestmirror_enabled=0
 gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-mirrorlist=http://mirrorlist.centos.org/?release=$RELEASE_SERVER&arch=$BASE_ARCH&repo=os
+mirrorlist=http://mirrorlist.centos.org/?release=$1&arch=$2&repo=os
 EOF
 
 /bin/cat << EOF > /etc/yum.repos.d/centos-release-scl-rh.repo
 [centos-release-scl-rh]
 name=Yum Repository
-baseurl=http://mirror.centos.org/centos/$RELEASE_SERVER/sclo/$BASE_ARCH/rh/
+baseurl=http://mirror.centos.org/centos/$1/sclo/$2/rh/
 enabled=1
 fastestmirror_enabled=0
 gpgcheck=1
