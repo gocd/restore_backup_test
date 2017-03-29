@@ -49,11 +49,11 @@ class Redhat
   end
 
   def install(pkg)
-    sh("yum install --assumeyes #{pkg}")
+    sh("sudo yum install --assumeyes #{pkg}")
   end
 
   def uninstall(pkg)
-    sh("yum remove --assumeyes #{pkg}")
+    sh("sudo yum remove --assumeyes #{pkg}")
   end
 end
 
