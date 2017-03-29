@@ -44,6 +44,15 @@ gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-SCLo
 EOF
 
+/bin/cat << EOF > /etc/yum.repos.d/gocd-exp.repo
+[gocd-exp]
+name=gocd-exp
+baseurl=https://download.gocd.io/experimental
+enabled=1
+gpgcheck=1
+gpgkey=https://download.gocd.io/GOCD-GPG-KEY.asc
+EOF
+
 yum makecache
 yum install -y epel-release centos-release-scl
 yum install -y unzip git rh-ruby22-rubygem-rake
