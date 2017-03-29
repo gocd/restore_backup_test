@@ -7,7 +7,6 @@ baseurl=http://fmtsd01.thoughtworks.com/centos/6.8/os/$2/
 enabled=1
 fastestmirror_enabled=0
 gpgcheck=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 mirrorlist=http://mirrorlist.centos.org/?release=$1&arch=$2&repo=os
 EOF
 
@@ -17,8 +16,7 @@ name=Yum Repository
 baseurl=http://mirror.centos.org/centos/$1/sclo/$2/rh/
 enabled=1
 fastestmirror_enabled=0
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-SCLo
+gpgcheck=0
 EOF
 
 yum makecache
