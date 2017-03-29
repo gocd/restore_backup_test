@@ -30,6 +30,24 @@ SNAPSHOT = {:MD5 => {},:TABLES => {}}
 class Redhat
   include Rake::DSL if defined?(Rake::DSL)
 
+  def repo
+    open('/etc/yum.repos.d/gocd.repo', 'w') do |f|
+      f.puts('[gocd]')
+      f.puts('name=gocd')
+      f.puts('baseurl=https://download.gocd.io')
+      f.puts('enabled=1')
+      f.puts('gpgcheck=1')
+      f.puts('gpgkey=https://download.gocd.io/GOCD-GPG-KEY.asc')
+      f.puts('[gocd-exp]')
+      f.puts('name=gocd-exp')
+      f.puts('baseurl=https://download.gocd.io/experimental')
+      f.puts('enabled=1')
+      f.puts('gpgcheck=1')
+      f.puts('gpgkey=https://download.gocd.io/GOCD-GPG-KEY.asc')
+    end
+    sh("yum makecache --disablerepo='*' --enablerepo='gocd*'")
+  end
+
   def install(pkg)
     sh("yum install --assumeyes #{pkg}")
   end
@@ -41,7 +59,7 @@ end
 
 task :restore do
   clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
-  sh %Q{wget -q -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}/#{Time.now.strftime("%d-%m-%Y")}/ -P #{BACKUP_DOWNLOAD_FOLDER}/}
+  sh %Q{wget -q -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}/28-03-2017/ -P #{BACKUP_DOWNLOAD_FOLDER}/} #{Time.now.strftime("%d-%m-%Y")}
   %w{db.zip config-repo.zip config-dir.zip}.each{|f|
     snapshot = JSON.parse(File.read("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json"))
     assert snapshot["MD5"][f] == Digest::MD5.hexdigest(File.read "#{BACKUP_DOWNLOAD_FOLDER}/#{f}")
