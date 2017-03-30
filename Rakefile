@@ -59,11 +59,11 @@ end
 
 task :restore do
   clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
-  sh %Q{wget -q -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}/28-03-2017/ -P #{BACKUP_DOWNLOAD_FOLDER}/} #{Time.now.strftime("%d-%m-%Y")}
+  sh %Q{wget -q -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}/#{Time.now.strftime("%d-%m-%Y")}/ -P #{BACKUP_DOWNLOAD_FOLDER}/}
   %w{db.zip config-repo.zip config-dir.zip}.each{|f|
     snapshot = JSON.parse(File.read("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json"))
     assert snapshot["MD5"][f] == Digest::MD5.hexdigest(File.read "#{BACKUP_DOWNLOAD_FOLDER}/#{f}")
-    p "Backup files Snapshot validation successful"
+    p "Backup files Snapshot validation successful for file #{f}"
   }
   Redhat.new.install("go-server-#{server_version}")
   %w{h2db config.git}.each {|fld| mkdir_p "/var/lib/go-server/db/#{fld}"}
@@ -76,7 +76,7 @@ task :restore do
     table = t[:table_name]
     snapshot = JSON.parse(File.read("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json"))
     assert snapshot["TABLES"][table] == DB[table.to_sym].count.to_s
-    p "DB Snapshot validation successful"
+    p "DB Snapshot validation successful for table #{table}"
   }
   mkdir_p "/var/lib/go-server/weblogs"
   sh %Q{service go-server start}
