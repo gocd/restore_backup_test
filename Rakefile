@@ -63,6 +63,7 @@ task :restore do
   %w{db.zip config-repo.zip config-dir.zip}.each{|f|
     snapshot = JSON.parse(File.read("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json"))
     assert snapshot["MD5"][f] == Digest::MD5.hexdigest(File.read "#{BACKUP_DOWNLOAD_FOLDER}/#{f}")
+    p "Backup files Snapshot validation successful"
   }
   Redhat.new.install("go-server-#{server_version}")
   %w{h2db config.git}.each {|fld| mkdir_p "/var/lib/go-server/db/#{fld}"}
@@ -75,8 +76,9 @@ task :restore do
     table = t[:table_name]
     snapshot = JSON.parse(File.read("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json"))
     assert snapshot["TABLES"][table] == DB[table.to_sym].count.to_s
+    p "DB Snapshot validation successful"
   }
-
+  mkdir_p "/var/lib/go-server/weblogs"
   sh %Q{service go-server start}
 
 end
