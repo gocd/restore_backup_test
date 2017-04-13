@@ -58,10 +58,6 @@ class Redhat
 end
 
 task :restore do
-  clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
-  backup_location_info = File.read("backup_location_info")
-
-  sh %Q{wget -q -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}/#{backup_location_info}/ -P #{BACKUP_DOWNLOAD_FOLDER}/}
   %w{db.zip config-repo.zip config-dir.zip}.each{|f|
     snapshot = JSON.parse(File.read("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json"))
     assert snapshot["MD5"][f] == Digest::MD5.hexdigest(File.read "#{BACKUP_DOWNLOAD_FOLDER}/#{f}")
@@ -97,21 +93,24 @@ task :cleanup do
 end
 
 task :backup_snapshot do
-
-  Dir["#{BACKUP_FOLDER}/**/*.zip"].each {|f| SNAPSHOT[:MD5].merge!(f.split('/').last.to_sym => Digest::MD5.hexdigest(File.read "#{f}"))}
+  Dir["#{BACKUP_DOWNLOAD_FOLDER}/**/*.zip"].each {|f| SNAPSHOT[:MD5].merge!(f.split('/').last.to_sym => Digest::MD5.hexdigest(File.read "#{f}"))}
   clean_create_dir("#{Dir.tmpdir}/db")
-  dbfile = Dir["#{BACKUP_FOLDER}/**/db.zip"].first.to_s
+  dbfile = Dir["#{BACKUP_DOWNLOAD_FOLDER}/**/db.zip"].first.to_s
   unzipfile dbfile,"#{Dir.tmpdir}/db"
   DB = Sequel.connect("jdbc:h2:file:#{Dir.tmpdir}/db/cruise;user=sa")
   DB["SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='TABLE'"].each{|t|
     table = t[:table_name]
     SNAPSHOT[:TABLES].merge!(table.to_sym => "#{DB[table.to_sym].count}")
   }
-  open("#{BACKUP_FOLDER}/snapshot.json", 'w') do |file|
+  open("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json", 'w') do |file|
     file.write(SNAPSHOT.to_json)
   end
-  sh("mv #{BACKUP_FOLDER}/snapshot.json #{BACKUP_FOLDER}/backup_*/")
-
 end
 
-task :restore_test => [:restore, :run_test, :cleanup]
+task :fetch_backup do
+  clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
+  backup_location_info = File.read("backup_location_info")
+  sh %Q{wget -q -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}/#{backup_location_info}/ -P #{BACKUP_DOWNLOAD_FOLDER}/}
+end
+
+task :restore_test => [:fetch_backup, :backup_snapshot, :restore, :run_test, :cleanup]
