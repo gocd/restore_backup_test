@@ -4,3 +4,4 @@ tmp
 vendor/bundle
 vendor/gem_home
 .bundle
+backup_location_info
