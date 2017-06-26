@@ -35,6 +35,7 @@ def wait_to_start(url)
       begin
         break if running?(url)
       rescue Errno::ECONNREFUSED
+        p "Connection refused on server ping"
         sleep 5
       end
     end
@@ -56,6 +57,7 @@ def running?(url)
   begin
     ping(url).code == 200
   rescue => e
+    p "Connection refused on server ping"
     false
   end
 end
