@@ -82,7 +82,7 @@ task :restore_files do
   }
 
   Redhat.new.install("go-server-#{server_version}")
-  mkdir_p "/var/lib/go-server/db/onfig.git"
+  mkdir_p "/var/lib/go-server/db/config.git"
   {"config-dir.zip" => "/etc/go/","config-repo.zip" => "/var/lib/go-server/db/config.git/"}.each do |file, dest|
     restore_files("#{BACKUP_DOWNLOAD_FOLDER}/#{file}", dest)
   end
