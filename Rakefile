@@ -67,7 +67,7 @@ class Redhat
     sh(%Q{sudo -H -u postgres bash -c 'sed -i 's/peer/md5/g' /var/lib/pgsql/data/pg_hba.conf'})
     sh(%Q{sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"})
     sh("sudo service postgresql restart")
-    sh(%Q{sudo -u postgres createuser #{PG_USER_NAME}})
+    sh(%Q{sudo -u postgres createuser -s #{PG_USER_NAME}})
     sh(%Q{sudo -H -u postgres bash -c 'createdb -U postgres #{PG_DB_NAME}'})
   end
 end
