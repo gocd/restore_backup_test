@@ -60,8 +60,8 @@ class Redhat
   end
 
   def setup_postgres()
-    sh("sudo yum install --assumeyes postgresql-server")
-    sh("sudo yum install --assumeyes postgresql-contrib")
+    sh("sudo rpm -Uvh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-2.noarch.rpm")
+    sh("sudo yum install --assumeyes postgresql94-server postgresql94-contrib")
     sh(%Q{sudo -H -u postgres bash -c 'initdb -D /var/lib/pgsql/data'})
     sh("sudo service postgresql start")
     sh(%Q{sudo -H -u postgres bash -c 'sed -i 's/peer/md5/g' /var/lib/pgsql/data/pg_hba.conf'})
