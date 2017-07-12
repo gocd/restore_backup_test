@@ -182,7 +182,7 @@ end
 task :fetch_backup do
   clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
   backup_location_info = File.read("backup_location_info")
-  sh %Q{wget -q -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}/#{backup_location_info}/ -P #{BACKUP_DOWNLOAD_FOLDER}/}
+  sh %Q{wget -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}/#{backup_location_info}/ -P #{BACKUP_DOWNLOAD_FOLDER}/}
 end
 
 task :h2_restore_test => [:fetch_backup, :snapshot_files, :snapshot_h2, :restore_files, :restore_h2, :start_server, :run_test, :cleanup]
