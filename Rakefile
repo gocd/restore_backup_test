@@ -61,12 +61,13 @@ class Redhat
 
   def setup_postgres()
     sh("sudo rpm -Uvh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-2.noarch.rpm")
+    sh("sudo yum update")
     sh("sudo yum install --assumeyes postgresql94-server postgresql94-contrib")
-    sh(%Q{sudo -H -u postgres bash -c '/etc/init.d/postgresql-9.4 initdb'})
-    sh("sudo service postgresql start")
+    sh(%Q{sudo -H -u postgres bash -c 'service postgresql-9.4 initdb'})
+    sh("sudo service postgresql-9.4 start")
     sh(%Q{sudo -H -u postgres bash -c 'sed -i 's/peer/md5/g' /var/lib/pgsql/9.4/data/pg_hba.conf'})
     sh(%Q{sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"})
-    sh("sudo service postgresql restart")
+    sh("sudo service postgresql-9.4 restart")
     sh(%Q{sudo -u postgres createuser -s #{PG_USER_NAME}})
     sh(%Q{sudo -H -u postgres bash -c 'createdb -U postgres #{PG_DB_NAME}'})
   end
