@@ -61,7 +61,7 @@ class Redhat
 
   def setup_postgres()
     sh("sudo rpm -Uvh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-2.noarch.rpm")
-    sh("sudo yum update")
+    sh("sudo yum update --assumeyes")
     sh("sudo yum install --assumeyes postgresql94-server postgresql94-contrib")
     sh(%Q{sudo -H -u postgres bash -c 'service postgresql-9.4 initdb'})
     sh("sudo service postgresql-9.4 start")
