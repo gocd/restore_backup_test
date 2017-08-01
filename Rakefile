@@ -63,6 +63,7 @@ class Redhat
     sh("sudo rpm -Uvh --replacepkgs http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-3.noarch.rpm")
     sh("sudo yum update --assumeyes")
     sh("sudo yum install --assumeyes postgresql94-server postgresql94-contrib")
+    sh(%Q{sudo -H -u postgres bash -c 'rm -rf /var/lib/pgsql/9.4/data/pg_log'})
     sh(%Q{sudo -H -u postgres bash -c 'service postgresql-9.4 initdb'})
     sh("sudo service postgresql-9.4 start")
     sh(%Q{sudo -H -u postgres bash -c 'sed -i 's/peer/md5/g' /var/lib/pgsql/9.4/data/pg_hba.conf'})
