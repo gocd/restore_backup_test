@@ -164,14 +164,14 @@ task :snapshot_pg do
   Redhat.new.setup_postgres()
   dbfile = Dir["#{BACKUP_DOWNLOAD_FOLDER}/**/*.sqlc"].first.to_s
   sh(%Q{sudo -H -u postgres pg_restore -U postgres --dbname=#{PG_DB_NAME} < "#{dbfile}"})
-  DB = Sequel.connect("postgres://postgres:postgres@localhost:5432/#{PG_DB_NAME}")
-  DB["SELECT table_name FROM information_schema.tables WHERE table_schema='public'"].each{|t|
-    SNAPSHOT[:TABLES].merge!(t.to_sym => "#{DB[t.to_sym].count}")
-  }
+  #DB = Sequel.connect("postgres://postgres:postgres@localhost:5432/#{PG_DB_NAME}")
+  #DB["SELECT table_name FROM information_schema.tables WHERE table_schema='public'"].each{|t|
+  #  SNAPSHOT[:TABLES].merge!(t.to_sym => "#{DB[t.to_sym].count}")
+  #}
 
-  open("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json", 'w') do |file|
-    file.write(SNAPSHOT.to_json)
-  end
+  #open("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json", 'w') do |file|
+  #  file.write(SNAPSHOT.to_json)
+  #end
 end
 
 task :fetch_backup do
