@@ -60,8 +60,8 @@ class Redhat
   end
 
   def setup_postgres()
-    sh(%Q{sudo -u postgres dropuser --if-exists #{PG_USER_NAME}})
     sh(%Q{sudo -u postgres dropdb #{PG_DB_NAME} || true})
+    sh(%Q{sudo -u postgres dropuser --if-exists #{PG_USER_NAME}})
     sh(%Q{sudo -u postgres createuser -s #{PG_USER_NAME}})
     sh(%Q{sudo -H -u postgres bash -c 'createdb -U postgres #{PG_DB_NAME}'})
   end
