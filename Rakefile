@@ -104,7 +104,7 @@ end
 task :restore_pg do
 
   mkdir_p "/var/lib/go-server/addons"
-  json = JSON.parse(File.read("../addons_compatability_map/addons_build.json"))
+  json = JSON.parse(File.read("../addons_compatability_map/addon_builds.json"))
   addon = json.select{|v| v['gocd_version'] == "#{server_version}"}.last['addons']['postgresql']
   sh "curl -o /var/lib/go-server/addons/#{addon} --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['ADDON_DOWNLOAD_URL']}/#{key['go_full_version']}/download?eula_accepted=true"
   sh("mv /etc/go/postgresqldb.properties /etc/go/postgresqldb.properties.bkp")
