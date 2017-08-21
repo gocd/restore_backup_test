@@ -106,7 +106,7 @@ task :restore_pg do
   mkdir_p "/var/lib/go-server/addons"
   json = JSON.parse(File.read("../addons_compatability_map/addon_builds.json"))
   addon = json.select{|v| v['gocd_version'] == "#{server_version}"}.last['addons']['postgresql']
-  sh "curl -o /var/lib/go-server/addons/#{addon} --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['ADDON_DOWNLOAD_URL']}/#{server_version}/download?eula_accepted=true"
+  sh "curl -L -o /var/lib/go-server/addons/#{addon} --fail -H 'Accept: binary/octet-stream' --user '#{ENV['EXTENSIONS_USER']}:#{ENV['EXTENSIONS_PASSWORD']}'  #{ENV['ADDON_DOWNLOAD_URL']}/#{server_version}/download?eula_accepted=true"
   sh("mv /etc/go/postgresqldb.properties /etc/go/postgresqldb.properties.bkp")
 
   sh(%Q{sudo -H -u go bash -c 'echo "db.host=localhost"  >> /etc/go/postgresqldb.properties'})
