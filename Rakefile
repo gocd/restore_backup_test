@@ -30,6 +30,7 @@ SNAPSHOT = {:MD5 => {},:TABLES => {}}
 PG_DB_NAME = ENV['PG_DB_NAME'] || "cruise"
 PG_USER_NAME = ENV['PG_USER_NAME'] || "cruise"
 
+
 class Redhat
   include Rake::DSL if defined?(Rake::DSL)
 
@@ -180,5 +181,16 @@ task :fetch_backup do
   sh %Q{wget -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}/#{backup_location_info}/ -P #{BACKUP_DOWNLOAD_FOLDER}/}
 end
 
+task :fetch_backup_from_s3 do
+  clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
+  aes_filename = File.read("aes_filename")
+  sh %Q{aws s3 cp s3://#{ENV['S3_BUCKET']}/#{aes_filename} #{BACKUP_DOWNLOAD_FOLDER}/}
+  cd "#{BACKUP_DOWNLOAD_FOLDER}" do
+    sh("aes -d -p #{ENV['AES_PASSWORD']} #{aes_filename}")
+    sh("tar -xvf *.tar.gz")
+  end
+end
+
+task :h2_restore_from_s3_test => [:fetch_backup_from_s3, :snapshot_files, :snapshot_h2, :restore_files, :restore_h2, :start_server, :run_test, :cleanup]
 task :h2_restore_test => [:fetch_backup, :snapshot_files, :snapshot_h2, :restore_files, :restore_h2, :start_server, :run_test, :cleanup]
 task :pg_restore_test => [:fetch_backup, :snapshot_files, :snapshot_pg, :restore_files, :restore_pg, :start_server, :run_test, :cleanup]
