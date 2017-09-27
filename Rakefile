@@ -120,6 +120,10 @@ end
 
 task :start_server do
   mkdir_p "/var/lib/go-server/weblogs"
+  open('/etc/default/go-server', 'a') do |f|
+    f.puts('SERVER_MAX_MEM=8g')
+    f.puts('SERVER_MEM=1024m')
+  end
   sh %Q{service go-server start}
 end
 
