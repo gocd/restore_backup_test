@@ -92,11 +92,11 @@ task :restore_h2 do
 
   restore_files("#{BACKUP_DOWNLOAD_FOLDER}/db.zip",  "/var/lib/go-server/db/h2db/")
 
-  DB = Sequel.connect("jdbc:h2:file:/var/lib/go-server/db/h2db/cruise;user=sa")
-  DB["SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='TABLE'"].each{|t|
+  DB_CONN = Sequel.connect("jdbc:h2:file:/var/lib/go-server/db/h2db/cruise;user=sa")
+  DB_CONN["SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='TABLE'"].each{|t|
     table = t[:table_name]
     snapshot = JSON.parse(File.read("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json"))
-    assert snapshot["TABLES"][table] == DB[table.to_sym].count.to_s
+    assert snapshot["TABLES"][table] == DB_CONN[table.to_sym].count.to_s
     p "DB Snapshot validation successful for table #{table}"
   }
 
@@ -126,6 +126,7 @@ task :start_server do
     f.puts('SERVER_MEM=1024m')
   end
   sh ("service go-server start || true")
+  p "Server start initiated....."
 end
 
 task :run_test do
@@ -184,7 +185,7 @@ end
 task :fetch_backup do
   clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
   backup_location_info = File.read("backup_location_info")
-  sh %Q{wget -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}/#{backup_location_info}/ -P #{BACKUP_DOWNLOAD_FOLDER}/}
+  sh %Q{wget -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}#{backup_location_info}/ -P #{BACKUP_DOWNLOAD_FOLDER}/}
 end
 
 task :fetch_backup_from_s3 do
