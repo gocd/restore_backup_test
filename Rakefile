@@ -125,7 +125,7 @@ task :start_server do
     f.puts('SERVER_MAX_MEM=8g')
     f.puts('SERVER_MEM=1024m')
   end
-  # sh ("service go-server start || true")
+  sh ("/etc/init.d/go-server start || true")
   p "Server start initiated....."
 end
 
