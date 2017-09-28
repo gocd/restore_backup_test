@@ -129,7 +129,8 @@ task :start_server do
 end
 
 task :run_test do
-  wait_to_start("http://localhost:8153/go/pipelines")
+  p "Starting to run test..."
+  wait_to_start("http://localhost:8153/go/about")
 end
 
 task :cleanup do
