@@ -68,6 +68,7 @@ def clean_create_dir(dir)
 end
 
 def ping(url)
+  p "Check if server is up & running ... Hitting URL : #{url}"
   RestClient.get("#{url}")
 end
 
