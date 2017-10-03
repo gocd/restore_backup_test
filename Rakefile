@@ -125,7 +125,7 @@ task :start_server do
     f.puts('SERVER_MAX_MEM=8g')
     f.puts('SERVER_MEM=1024m')
   end
-  sh ("/etc/init.d/go-server start || true")
+  sh "/etc/init.d/go-server start"
   p "Server start initiated....."
 end
 
@@ -191,7 +191,8 @@ end
 task :fetch_backup_from_s3 do
   clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
   aes_filename = File.read("aes_filename")
-  sh %Q{aws s3 cp s3://#{ENV['S3_BUCKET']}/#{aes_filename} #{BACKUP_DOWNLOAD_FOLDER}/}
+  sh %Q{AWS_ACCESS_KEY_ID=#{ENV['AWS_ACCESS_KEY_ID']} AWS_SECRET_ACCESS_KEY=#{ENV['AWS_SECRET_ACCESS_KEY']} aws s3 cp s3://#{ENV['S3_BUCKET']}/#{aes_filename} #{BACKUP_DOWNLOAD_FOLDER}/}
+
   cd "#{BACKUP_DOWNLOAD_FOLDER}" do
     sh("aes -d -p #{ENV['AES_PASSWORD']} #{aes_filename}")
     sh("tar -xvf *.tar.gz")
