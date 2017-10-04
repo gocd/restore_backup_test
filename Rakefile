@@ -193,7 +193,7 @@ task :fetch_backup_from_s3 do
   aes_filename = File.read("aes_filename")
 
   cd "#{BACKUP_DOWNLOAD_FOLDER}" do
-    sh %Q{AWS_ACCESS_KEY_ID=#{ENV['AWS_ACCESS_KEY_ID']} AWS_SECRET_ACCESS_KEY=#{ENV['AWS_SECRET_ACCESS_KEY']} aws s3 cp s3://#{ENV['S3_BUCKET']}/#{aes_filename} .}
+    sh %Q{AWS_ACCESS_KEY_ID=#{ENV['AWS_ACCESS_KEY_ID']} AWS_SECRET_ACCESS_KEY=#{ENV['AWS_SECRET_ACCESS_KEY']} aws s3 cp s3://#{ENV['S3_BUCKET']}/#{aes_filename} #{aes_filename}}
     sh("aes -d -p #{ENV['AES_PASSWORD']} #{aes_filename}")
     sh("tar -xvf *.tar.gz")
   end
