@@ -125,11 +125,8 @@ task :start_server do
     f.puts('SERVER_MAX_MEM=8g')
     f.puts('SERVER_MEM=1024m')
   end
-  begin
-    sh "/etc/init.d/go-server start"
-  rescue Exception => e
-    p "Server startup failed with exception...."
-    p e.message
+  sh "/etc/init.d/go-server start" do |ok,res|
+    p "Ignore if any error"
   end
   p "Server start initiated....."
 end
