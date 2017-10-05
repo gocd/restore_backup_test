@@ -125,7 +125,12 @@ task :start_server do
     f.puts('SERVER_MAX_MEM=8g')
     f.puts('SERVER_MEM=1024m')
   end
-  sh "/etc/init.d/go-server start"
+  begin
+    sh "/etc/init.d/go-server start"
+  rescue Exception => e
+    p "Server startup failed with exception...."
+    p e.message
+  end
   p "Server start initiated....."
 end
 
@@ -193,7 +198,7 @@ task :fetch_backup_from_s3 do
   aes_filename = File.read("aes_filename")
 
   cd "#{BACKUP_DOWNLOAD_FOLDER}" do
-    sh %Q{AWS_ACCESS_KEY_ID=#{ENV['AWS_ACCESS_KEY_ID']} AWS_SECRET_ACCESS_KEY=#{ENV['AWS_SECRET_ACCESS_KEY']} aws s3 cp s3://#{ENV['S3_BUCKET']}/#{aes_filename} backup.tar.gz.aes}
+    sh("AWS_ACCESS_KEY_ID=#{ENV['AWS_ACCESS_KEY_ID']} AWS_SECRET_ACCESS_KEY=#{ENV['AWS_SECRET_ACCESS_KEY']} aws s3 cp s3://#{ENV['S3_BUCKET']}/#{aes_filename.chop} backup.tar.gz.aes")
     sh("aes -d -p #{ENV['AES_PASSWORD']} backup.tar.gz.aes")
     sh("tar -xvf *.tar.gz")
   end
