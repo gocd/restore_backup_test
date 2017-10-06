@@ -126,7 +126,7 @@ task :start_server do
     f.puts('SERVER_MEM=1024m')
   end
   p "Server start initiating....."
-  sh "service go-server start > /dev/null"
+  sh "./usr/share/go-server/server.sh service_mode"
 end
 
 task :run_test do
