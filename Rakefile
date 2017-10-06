@@ -124,6 +124,7 @@ task :start_server do
   open('/etc/default/go-server', 'a') do |f|
     f.puts('SERVER_MAX_MEM=8g')
     f.puts('SERVER_MEM=1024m')
+    f.puts('DAEMON=Y')
   end
   p "Server start initiating....."
   sh "service go-server start"
