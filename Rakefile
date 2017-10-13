@@ -130,7 +130,7 @@ task :start_server do
   sh("sudo chmod 777 /usr/share/go-server/server.sh")
   sh("sudo ls -l /usr/share/go-server/server.sh")
   p "Server start initiating....."
-  sh "sudo DAEMON=Y /usr/share/go-server/server.sh"
+  sh "export DAEMON=Y; sudo /usr/share/go-server/server.sh"
 end
 
 task :run_test do
