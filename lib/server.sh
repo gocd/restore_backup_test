@@ -185,7 +185,7 @@ echo "[$(date)] Starting Go Server in directory: $SERVER_WORK_DIR" >>"$STDOUT_LO
 cd "$SERVER_WORK_DIR"
 
 if [ "$DAEMON" == "Y" ]; then
-    exec nohup "${RUN_CMD[@]}" >>"$STDOUT_LOG_FILE" 2>&1 &
+    exec nohup "${RUN_CMD[@]}" &
     disown $!
     echo $! >"$PID_FILE"
 else
