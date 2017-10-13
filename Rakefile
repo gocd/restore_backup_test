@@ -130,7 +130,7 @@ task :start_server do
   sh("sudo chmod 777 /usr/share/go-server/server.sh")
   sh("sudo ls -l /usr/share/go-server/server.sh")
   p "Server start initiating....."
-  sh "service go-server start"
+  sh "DAEMON=Y service go-server start"
 end
 
 task :run_test do
