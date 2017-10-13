@@ -125,12 +125,12 @@ task :start_server do
     f.puts('SERVER_MAX_MEM=8g')
     f.puts('SERVER_MEM=1024m')
   end
-  p "Replace server.sh with one in GOCD version 17.10.0"
-  sh("sudo cp -r --remove-destination lib/server.sh /usr/share/go-server/server.sh")
-  sh("sudo chmod 777 /usr/share/go-server/server.sh")
-  sh("sudo ls -l /usr/share/go-server/server.sh")
+  # p "Replace server.sh with one in GOCD version 17.10.0"
+  # sh("sudo cp -r --remove-destination lib/server.sh /usr/share/go-server/server.sh")
+  # sh("sudo chmod 777 /usr/share/go-server/server.sh")
+  # sh("sudo ls -l /usr/share/go-server/server.sh")
   p "Server start initiating....."
-  sh "export DAEMON=Y; sudo /usr/share/go-server/server.sh"
+  sh "service go-server start"
 end
 
 task :run_test do
