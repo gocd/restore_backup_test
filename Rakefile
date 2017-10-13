@@ -125,8 +125,11 @@ task :start_server do
     f.puts('SERVER_MAX_MEM=8g')
     f.puts('SERVER_MEM=1024m')
   end
+  p "Replace server.sh with one in GOCD version 17.10.0"
+  cp_r('lib/server.sh', '/usr/share/go-server/server.sh', :remove_destination => true)
+  sh('ls -l /usr/share/go-server/server.sh')
   p "Server start initiating....."
-  sh "./usr/share/go-server/server.sh service_mode"
+  sh "service go-server start"
 end
 
 task :run_test do
