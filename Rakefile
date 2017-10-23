@@ -19,6 +19,7 @@ require 'json'
 require 'test/unit'
 require 'sequel'
 require_relative 'lib/helper.rb'
+require 'aws-sdk-s3'
 
 include Test::Unit::Assertions
 
@@ -195,14 +196,17 @@ end
 task :fetch_backup_from_s3 do
   clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
   aes_filename = File.read("aes_filename")
-
+  Aws.config.update({
+    region: 'us-west-2',
+    credentials: Aws::Credentials.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY'])
+  })
+  s3 = Aws::S3::Client.new
+  s3.get_object({ bucket:ENV['S3_BUCKET'], key:aes_filename.chop }, target: "#{BACKUP_DOWNLOAD_FOLDER}/backup.tar.gz.aes")
   cd "#{BACKUP_DOWNLOAD_FOLDER}" do
-    sh("AWS_ACCESS_KEY_ID=#{ENV['AWS_ACCESS_KEY_ID']} AWS_SECRET_ACCESS_KEY=#{ENV['AWS_SECRET_ACCESS_KEY']} aws s3 cp s3://#{ENV['S3_BUCKET']}/#{aes_filename.chop} backup.tar.gz.aes")
     sh("aes -d -p #{ENV['AES_PASSWORD']} backup.tar.gz.aes")
     sh("tar -xvf *.tar.gz")
   end
 end
-
 
 task :h2_restore_test => [:fetch_backup, :snapshot_files, :snapshot_h2, :restore_files, :restore_h2, :start_server, :run_test, :cleanup]
 task :pg_restore_test => [:fetch_backup, :snapshot_files, :snapshot_pg, :restore_files, :restore_pg, :start_server, :run_test, :cleanup]
