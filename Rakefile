@@ -203,7 +203,7 @@ task :fetch_backup_from_s3 do
   s3 = Aws::S3::Client.new
   s3.get_object({ bucket:ENV['S3_BUCKET'], key:aes_filename.chop }, target: "#{BACKUP_DOWNLOAD_FOLDER}/backup.tar.gz.aes")
   cd "#{BACKUP_DOWNLOAD_FOLDER}" do
-    sh("aes -d -p #{ENV['AES_PASSWORD']} backup.tar.gz.aes")
+    sh("aescrypt -d -p #{ENV['AES_PASSWORD']} backup.tar.gz.aes")
     sh("tar -xvf *.tar.gz")
   end
 end
