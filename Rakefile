@@ -205,6 +205,7 @@ task :fetch_backup_from_s3 do
   cd "#{BACKUP_DOWNLOAD_FOLDER}" do
     sh("aescrypt -d -p #{ENV['AES_PASSWORD']} backup.tar.gz.aes")
     sh("tar -xvf *.tar.gz")
+    sh("mv var/go/encrypted_backup/files/* .")
   end
 end
 
