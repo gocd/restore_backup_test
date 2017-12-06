@@ -176,7 +176,7 @@ task :snapshot_pg do
 
   Redhat.new.setup_postgres()
   dbfile = Dir["#{BACKUP_DOWNLOAD_FOLDER}/**/*.sqlc"].first.to_s
-  sh(%Q{sudo -H -u postgres psql -U postgres -d #{PG_DB_NAME} -1 -f #{dbfile}})
+  sh(%Q{sudo -H -u postgres pg_dump -U postgres --format=c --file=#{dbfile} #{PG_DB_NAME}})
   #DB = Sequel.connect("postgres://postgres:postgres@localhost:5432/#{PG_DB_NAME}")
   #DB["SELECT table_name FROM information_schema.tables WHERE table_schema='public'"].each{|t|
   #  SNAPSHOT[:TABLES].merge!(t.to_sym => "#{DB[t.to_sym].count}")
