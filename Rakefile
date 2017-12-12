@@ -78,8 +78,9 @@ task :restore_files do
       p "Backup files Snapshot validation successful for file #{f}"
     }
   }
-
-  Redhat.new.install("go-server-#{server_version}")
+  centos = Redhat.new
+  centos.repo
+  centos.install("go-server-#{server_version}")
   mkdir_p "/var/lib/go-server/db/config.git"
   {"config-dir.zip" => "/etc/go/","config-repo.zip" => "/var/lib/go-server/db/config.git/"}.each do |file, dest|
     restore_files("#{BACKUP_DOWNLOAD_FOLDER}/#{file}", dest)
