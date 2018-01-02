@@ -78,6 +78,9 @@ task :restore_files do
       p "Backup files Snapshot validation successful for file #{f}"
     }
   }
+
+  sh('sudo touch /etc/yum.repos.d/gocd.repo')
+  sh('sudo chmod 666 /etc/yum.repos.d/gocd.repo')
   centos = Redhat.new
   centos.repo
   centos.install("go-server-#{server_version}")
