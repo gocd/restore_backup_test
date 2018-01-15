@@ -216,3 +216,4 @@ end
 task :h2_restore_test => [:fetch_backup, :snapshot_files, :snapshot_h2, :restore_files, :restore_h2, :start_server, :run_test, :cleanup]
 task :pg_restore_test => [:fetch_backup, :snapshot_files, :snapshot_pg, :restore_files, :restore_pg, :start_server, :run_test, :cleanup]
 task :h2_restore_from_s3_test => [:fetch_backup_from_s3, :snapshot_files, :snapshot_h2, :restore_files, :restore_h2, :start_server, :run_test, :cleanup]
+task :pg_restore_from_s3_test => [:fetch_backup_from_s3, :snapshot_files, :snapshot_pg, :restore_files, :restore_pg, :start_server, :run_test, :cleanup]
