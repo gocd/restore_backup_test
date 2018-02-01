@@ -26,6 +26,7 @@ include Test::Unit::Assertions
 BACKUP_FOLDER = ENV['BACKUP_FOLDER'] || '/mnt/go_server/go-server/artifacts/serverBackups'
 BACKUP_DOWNLOAD_FOLDER = ENV['BACKUP_DOWNLOAD_FOLDER'] ||  './go_server_backup'
 BACKUP_SERVER_URL = ENV['BACKUP_SERVER_URL']
+DECRYPTED_FILES_PATH = ENV['DECRYPTED_FILES_PATH'] || 'var/go'
 POSTGRES_BACKUP = ENV['POSTGRES_BACKUP'] || 'NO'
 SNAPSHOT = {:MD5 => {},:TABLES => {}}
 PG_DB_NAME = ENV['PG_DB_NAME'] || "cruise"
@@ -209,7 +210,7 @@ task :fetch_backup_from_s3 do
   cd "#{BACKUP_DOWNLOAD_FOLDER}" do
     sh("aescrypt -d -p #{ENV['AES_PASSWORD']} backup.tar.gz.aes")
     sh("tar -xvf *.tar.gz")
-    sh("mv var/go/encrypted_backup/files/* .")
+    sh("mv #{DECRYPTED_FILES_PATH}/encrypted_backup/files/* .")
   end
 end
 
