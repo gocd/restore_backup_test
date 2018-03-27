@@ -80,10 +80,7 @@ task :restore_files do
     }
   }
 
-  sh('sudo touch /etc/yum.repos.d/gocd.repo')
-  sh('sudo chmod 666 /etc/yum.repos.d/gocd.repo')
   centos = Redhat.new
-  centos.repo
   centos.install("go-server-#{server_version}")
   mkdir_p "/var/lib/go-server/db/config.git"
   {"config-dir.zip" => "/etc/go/","config-repo.zip" => "/var/lib/go-server/db/config.git/"}.each do |file, dest|
