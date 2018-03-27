@@ -195,7 +195,7 @@ end
 task :fetch_backup do
   clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
   backup_location_info = File.read("backup_location_info")
-  sh %Q{cp -r #{BACKUP_FOLDER}#{backup_location_info}/ #{BACKUP_DOWNLOAD_FOLDER}/}
+  sh %Q{cp -r #{BACKUP_FOLDER}#{backup_location_info}/* #{BACKUP_DOWNLOAD_FOLDER}/}
 end
 
 task :fetch_backup_from_s3 do
