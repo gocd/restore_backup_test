@@ -23,7 +23,7 @@ require 'aws-sdk-s3'
 
 include Test::Unit::Assertions
 
-BACKUP_FOLDER = ENV['BACKUP_FOLDER'] || '/mnt/go_server/go-server/artifacts/serverBackups'
+BACKUP_FOLDER = ENV['BACKUP_FOLDER'] || '/mnt/go_server_backup'
 BACKUP_DOWNLOAD_FOLDER = ENV['BACKUP_DOWNLOAD_FOLDER'] ||  './go_server_backup'
 BACKUP_SERVER_URL = ENV['BACKUP_SERVER_URL']
 DECRYPTED_FILES_PATH = ENV['DECRYPTED_FILES_PATH'] || 'var/go'
@@ -195,7 +195,7 @@ end
 task :fetch_backup do
   clean_create_dir(BACKUP_DOWNLOAD_FOLDER)
   backup_location_info = File.read("backup_location_info")
-  sh %Q{wget -r -nH -nd -np -R "index.html*" #{BACKUP_SERVER_URL}#{backup_location_info}/ -P #{BACKUP_DOWNLOAD_FOLDER}/}
+  sh %Q{cp -r #{BACKUP_FOLDER}#{backup_location_info}/ #{BACKUP_DOWNLOAD_FOLDER}/}
 end
 
 task :fetch_backup_from_s3 do
