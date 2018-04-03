@@ -75,7 +75,7 @@ task :restore_files do
     snapshot = JSON.parse(File.read("#{BACKUP_DOWNLOAD_FOLDER}/snapshot.json"))
     Dir["#{BACKUP_DOWNLOAD_FOLDER}/**/#{file_type}"].each {|f|
       filename = f.split("/").last
-      assert snapshot["MD5"][filename] == Digest::MD5.hexdigest(File.read "#{BACKUP_DOWNLOAD_FOLDER}/#{filename}")
+      assert snapshot["MD5"][filename] == Digest::MD5.hexdigest(File.read "#{f}")
       p "Backup files Snapshot validation successful for file #{f}"
     }
   }
