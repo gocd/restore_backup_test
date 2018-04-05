@@ -93,6 +93,7 @@ def restore_files(zip_file, dest)
 end
 
 def server_version
-  version = File.open("./go_server_backup/version.txt", "rb").read
+  filename = Dir.glob("./go_server_backup/**/version.txt").first
+  version = File.open(filename, "rb").read
   "#{version.split(" ")[0]}-#{version.split(" ")[1].split("-")[0][1..-1]}"
 end
