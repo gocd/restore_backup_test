@@ -1,0 +1,35 @@
+version: 2
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: weekly
+    day: friday
+  open-pull-requests-limit: 99
+  ignore:
+  - dependency-name: aws-sdk-s3
+    versions:
+    - 1.87.0
+    - 1.88.0
+    - 1.88.1
+    - 1.88.2
+    - 1.89.0
+    - 1.91.0
+    - 1.92.0
+    - 1.93.0
+  - dependency-name: sequel
+    versions:
+    - 5.40.0
+    - 5.41.0
+    - 5.42.0
+  - dependency-name: excon
+    versions:
+    - 0.78.1
+    - 0.79.0
+  - dependency-name: test-unit
+    versions:
+    - 3.3.9
+    - 3.4.0
+  - dependency-name: docker-api
+    versions:
+    - 2.0.0
