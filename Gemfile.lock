@@ -26,7 +26,7 @@ GEM
     http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
-    jdbc-h2 (1.4.193)
+    jdbc-h2 (2.0.204)
     jmespath (1.6.2)
     json (2.6.3)
     json (2.6.3-java)
